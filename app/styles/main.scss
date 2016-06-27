@@ -24,6 +24,22 @@ body {
   //z-index: 999;
 }
 
+
+body.active{
+    animation: pulse 200ms 1;
+    //background-color: red;
+}
+
+@keyframes pulse {
+  0% {
+    background-color: red;
+  }
+  100% {
+    background-color: white;
+  }
+}
+
+
 #display {
   z-index: -1;
   outline: 1px solid #999;

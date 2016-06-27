@@ -11,12 +11,102 @@ if ('addEventListener' in document) {
 
 
 $(document).ready(function(){
+/*
+	var s = document.body || document.documentElement, s = s.style, prefixAnimation = '', prefixTransition = '';
+	if( s.WebkitAnimation == '' )	prefixAnimation	 = '-webkit-';
+	if( s.MozAnimation == '' )		prefixAnimation	 = '-moz-';
+	if( s.OAnimation == '' )		prefixAnimation	 = '-o-';
+	if( s.WebkitTransition == '' )	prefixTransition = '-webkit-';
+	if( s.MozTransition == '' )		prefixTransition = '-moz-';
+	if( s.OTransition == '' )		prefixTransition = '-o-';
+	Object.prototype.onCSSAnimationEnd = function( callback )
+	{
+		var runOnce = function( e ){ callback(); e.target.removeEventListener( e.type, runOnce ); };
+		this.addEventListener( 'webkitAnimationEnd', runOnce );
+		this.addEventListener( 'mozAnimationEnd', runOnce );
+		this.addEventListener( 'oAnimationEnd', runOnce );
+		this.addEventListener( 'oanimationend', runOnce );
+		this.addEventListener( 'animationend', runOnce );
+		if( ( prefixAnimation == '' && !( 'animation' in s ) ) || getComputedStyle( this )[ prefixAnimation + 'animation-duration' ] == '0s' ) callback();
+		return this;
+	};
+	Object.prototype.onCSSTransitionEnd = function( callback )
+	{
+		var runOnce = function( e ){ callback(); e.target.removeEventListener( e.type, runOnce ); };
+		this.addEventListener( 'webkitTransitionEnd', runOnce );
+		this.addEventListener( 'mozTransitionEnd', runOnce );
+		this.addEventListener( 'oTransitionEnd', runOnce );
+		this.addEventListener( 'transitionend', runOnce );
+		this.addEventListener( 'transitionend', runOnce );
+		if( ( prefixTransition == '' && !( 'transition' in s ) ) || getComputedStyle( this )[ prefixAnimation + 'transition-duration' ] == '0s' ) callback();
+		return this;
+	};
+*/
+	var drumMaster = new Howl({
+	  urls: ['audio/drums01.mp3'],
+	  sprite: {
+	    clap: [0, 50],
+	    kick: [50, 125],
+	    low: [125, 160],
+	    snare: [170, 190]
+	  }
+	});
 
+	// shoot the laser!
+	drumMaster.play('laser');
+
+	$('#lowBtn').on('click', function(){
+		$("body").addClass('active');
+		playClap();
+	});
+	$('#kickBtn').on('click', function(){
+		playKick();
+
+	});
+	$('#lowBtn').on('click', function(){
+		playLow();
+	});
+	$('#snareBtn').on('click', function(){
+		playSnare();
+	});
+	/*
+	$('#laserBtn').on('click', function(){
+		playLaser();
+	});
+	*/
+
+	$("body").on(
+	    "animationend MSAnimationEnd webkitAnimationEnd oAnimationEnd",
+	    function() {
+	        $(this).removeClass("active");
+	    }
+	);
+
+	function playClap(){
+		drumMaster.play('clap');
+
+	}
+	function playKick(){
+		drumMaster.play('kick');
+
+	}
+	function playLow(){
+		drumMaster.play('low');
+
+	}
+	function playSnare(){
+		drumMaster.play('snare');
+
+	}
+	function playLaser(){
+		drumMaster.play('laser');
+
+	}
 
 	
 
 	// create our AudioContext and osc Nodes
-	var audioContext, osc, gain, x;
+	var audioContext, osc, gain, x, y;
 	var ready=null;
 	var myShakeEvent;
 	var clap, kick, low, snare;
@@ -40,6 +130,8 @@ $(document).ready(function(){
 */
 
 	$( "#tiltBtn" ).click(function() {
+
+		
 		if (ready == "tilt" ){
 	  		stopTiltSound();
 		}else{
@@ -54,7 +146,7 @@ $(document).ready(function(){
 			activateShakeSound();
 		}
 	});
-
+/*
 	$( "#clapBtn" ).click(function() {
 		clap.currentTime = 0;
 		clap.play();
@@ -71,11 +163,12 @@ $(document).ready(function(){
 		snare.currentTime = 0;
 		snare.play();
 	});
-
+*/
 
 	function activateTiltSound(){
 
 		ready = 'tilt';
+		console.log('tilt sound')
 		$('#tiltBtn').text('stop');
 		window.addEventListener('mousedown', startSound);
 		window.addEventListener('mouseup', stopSound);
@@ -109,7 +202,8 @@ $(document).ready(function(){
 	function initShakeSound(){
 		//create a new instance of shake.js.
 	    myShakeEvent = new Shake({
-	        threshold: 15
+	        threshold: 2,
+	        timeout: 400
 	    });
 
 	    // start listening to device motion
@@ -124,7 +218,9 @@ $(document).ready(function(){
 
 	        //put your own code here etc.
 	        shakeSound();
-	        setTimeout(stopSound, 100);
+
+	        $("body").addClass('active');
+	        //setTimeout(stopSound, 100);
 	        
 	    }
 	}
@@ -143,12 +239,13 @@ $(document).ready(function(){
 	    osc.connect(gain);
 	    
 	    $('#status').html('init');
-
+/*
 
 	   clap = new Audio('audio/clap.wav');
 	   kick = new Audio('audio/kick.wav');
 	   low = new Audio('audio/low.wav');
 	   snare = new Audio('audio/snare.wav');
+	   */
 	
 	}
 
@@ -183,19 +280,9 @@ $(document).ready(function(){
 
     function startSound(){
     	console.log('test');
-    	osc.start(0);
+    	//osc.start(0);
 	   // gain.connect(audioContext.destination);
     
-    	/*osc = context.createOscillator();
-		osc.connect(context.destination);
-		osc.start(context.currentTime);
-		*/
-		$('#status').html('start');
-		
-    }
-
-    function shakeSound(){
-    	console.log('test');
     	osc = context.createOscillator();
 		osc.connect(context.destination);
 		osc.start(context.currentTime);
@@ -204,8 +291,37 @@ $(document).ready(function(){
 		
     }
 
+    function shakeSound(){
+    	console.log('shaking');
+    	if (x>0){
+    		playClap();
+    	}else {
+    		playKick();
+
+    	}
+    	/*
+    	if (x>0 && y>0){
+    		playClap();
+    	}else if (x>0 && y<0){
+    		playKick();
+
+    	}else if (x<0 && y>0){
+    		playLow();
+    	}else (x<0 && y<0)
+    		playSnare();
+    	}
+    	*/
+    	/*
+    	osc = context.createOscillator();
+		osc.connect(context.destination);
+		osc.start(context.currentTime);
+		*/
+		$('#status').html('start');
+		
+    }
+
     function stopSound(){
-    	osc.stop();
+    	//osc.stop();
   		//osc.disconnect();
   		$('#status').html('stop');
     }
@@ -290,9 +406,9 @@ $(document).ready(function(){
 	    if (window.DeviceMotionEvent) {
 	        window.addEventListener('devicemotion', function(event) {
 	            x= Math.floor(event.accelerationIncludingGravity.x);
-	            var y = Math.floor(event.accelerationIncludingGravity.y);
-	            var z = Math.floor(event.accelerationIncludingGravity.z);
-	            var r = Math.floor(event.rotationRate);
+	            y = event.accelerationIncludingGravity.y;
+	            var z = event.accelerationIncludingGravity.z;
+	            var r = event.rotationRate;
 	            var html = 'Acceleration:<br />';
 	            html += 'x: ' + x + '<br />y: ' + y + '<br/>z: ' + z + '<br />';
 	            html += 'Rotation rate:<br />';

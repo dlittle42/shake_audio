@@ -97,7 +97,7 @@ var VizHandler = function() {
 		// debugCube.rotation.y += 0.02;
 
 
-		// renderer.render( scene, camera );
+		 renderer.render( scene, camera );
 		
 
 	}

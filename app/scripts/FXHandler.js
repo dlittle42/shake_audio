@@ -7,7 +7,7 @@ var FXHandler = function() {
 	var screenW = 800;
 	var screenH = 600;
 	var blurriness = 3;
-	var renderComposer, glowComposer, blendComposer, filmPass, badTVPass,blendPass, mirrorPass ;
+	var renderComposer, glowComposer, blendComposer, filmPass, badTVPass,blendPass, mirrorPass, rgbPass;
 
 	function init(){
 
@@ -69,11 +69,11 @@ var FXHandler = function() {
 		mirrorPass = new THREE.ShaderPass( THREE.MirrorShader );
 		mirrorPass.uniforms[ "side" ].value =2;
 
-		var rgbPass = new THREE.ShaderPass( THREE.RGBShiftShader );
+		rgbPass = new THREE.ShaderPass( THREE.RGBShiftShader );
 
-		//blendComposer.addPass( mirrorPass );
-		//blendComposer.addPass( badTVPass );
-		//blendComposer.addPass( rgbPass );
+		blendComposer.addPass( mirrorPass );
+		blendComposer.addPass( badTVPass );
+		blendComposer.addPass( rgbPass );
 		blendComposer.addPass( filmPass );
 		filmPass.renderToScreen = true;
 		
@@ -83,7 +83,7 @@ var FXHandler = function() {
 		//beat detected
 		badTVPass.uniforms[ "distortion" ].value = 4.0;
 		badTVPass.uniforms[ "distortion2" ].value = 5.0;
-		//mirrorPass.uniforms[ "side" ].value = Math.floor(ATUtil.randomInt(0,3));
+		mirrorPass.uniforms[ "side" ].value = Math.floor(ATUtil.randomInt(0,3));
 		setTimeout(onBeatEnd,300);
 	}
 
@@ -100,7 +100,7 @@ var FXHandler = function() {
 		blendPass.uniforms[ 'amount' ].value = ControlsHandler.fxParams.glow;
 
 		renderComposer.render( 0.1 );
-		//glowComposer.render( 0.1 );
+		glowComposer.render( 0.1 );
 		blendComposer.render( 0.1 );
 
 	}

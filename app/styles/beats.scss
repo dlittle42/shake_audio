@@ -4,19 +4,18 @@ $icon-font-path: "../bower_components/bootstrap-sass/assets/fonts/bootstrap/";
 @import "bower_components/bootstrap-sass/assets/stylesheets/_bootstrap.scss";
 // endbower
 
+.browsehappy {
+  margin: 0.2em 0;
+  background: #ccc;
+  color: #000;
+  padding: 0.2em 0;
+}
 
 /* Space out content a bit */
 body {
-  background-color: #111;
-  margin: 0;
-  overflow: hidden;
-  color: #fff;
-  font-family: 'Roboto', sans-serif;
-  font-size: 12px;
-  padding:0;
-  height:100%;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
-
 
 
 #debug {
@@ -24,13 +23,7 @@ body {
   font-size: 1em;
   //z-index: 999;
 }
-#status{
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    padding: 5px;
-    background-color: black;
-}
+
 
 body.active{
     animation: pulse 200ms 1;
@@ -49,14 +42,6 @@ body > div { -webkit-transition: all 1s ease-in-out; }
 }
 
 .trigger{
-  
-  transition: all .2s ease-out; 
-  transform: scale(1,1);
-  -webkit-user-select: none;
-  -webkit-touch-callout: none;
-}
-
-.center{
   position: absolute;
   top: 50%;
   left: 50%;
@@ -64,28 +49,6 @@ body > div { -webkit-transition: all 1s ease-in-out; }
   margin-left: -40px;
   width:80px;
   height:80px;
-}
-
-.trigger.recording{
-  transform: scale(1.3,1.3);
-  
-
-    #recordBtn{
-      animation-name: rotate; 
-      animation-duration: 1s; 
-      animation-iteration-count: infinite;
-      animation-timing-function: linear;
-      animation-fill-mode: forwards;
-    }
-
-}
-
-
-
-
-@keyframes rotate {
-    from {transform: rotate(0deg);}
-    to {transform: rotate(360deg);}
 }
 
 .container{
@@ -105,6 +68,81 @@ body > div { -webkit-transition: all 1s ease-in-out; }
     /* Styles for Landscape screen */
     margin-left: -200px;
 }
+
+
+#display {
+  z-index: -1;
+  outline: 1px solid #999;
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  
+  transform-origin: center center;
+  transform-style: preserve-3d;
+  perspective: 500px;
+  
+  .plane {
+    outline: 1px solid #CCC;
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    
+    .axis {
+      outline: 1px dotted rgba(0,0,0,0.1);
+      position: absolute;
+      top: 0; right: 0; bottom: 0; left: 0;
+    }
+    
+    &.vertical {
+      .axis {
+        width: 50vw;
+      }
+    }
+    &.horizontal {
+      .axis {
+        height: 50vh;
+      }
+    }
+  }
+  .center-point {
+    height: 1px;
+    width: 1px;
+    background: #c0392b;
+    position: absolute;
+    top: 50vh;
+    left: 50vw;
+  }
+  
+  .ball {
+    font-size: 2em;
+    
+    transform-style: preserve-3d;
+    
+    height: 1em;
+    width: 1em;
+    background: #2980b9;
+    border-radius: 50%;
+    position: absolute;
+    margin-top: -0.5em;
+    margin-left: -0.5em;
+    display: block;
+    border: 0;
+    
+    &::after {
+      content: '';
+      display: block;
+      background: transparent;
+      height: 0;
+      width: 0;
+      position: absolute;
+      left: 0.25em;
+      top: -0.75em;
+      border-top: 0;
+      border-bottom: 0.5em solid #2980b9;
+      border-right: 0.25em solid transparent;
+      border-left: 0.25em solid transparent;
+    }
+  }
+}
+
 ////////// new threejs stuff /////////////
 
 
@@ -184,83 +222,6 @@ a {
 
 
 /////////////////
-
-#display {
-  z-index: -1;
-  outline: 1px solid #999;
-  position: absolute;
-  top: 0; right: 0; bottom: 0; left: 0;
-  
-  transform-origin: center center;
-  transform-style: preserve-3d;
-  perspective: 500px;
-  
-  .plane {
-    outline: 1px solid #CCC;
-    position: absolute;
-    top: 0; right: 0; bottom: 0; left: 0;
-    
-    .axis {
-      outline: 1px dotted rgba(0,0,0,0.1);
-      position: absolute;
-      top: 0; right: 0; bottom: 0; left: 0;
-    }
-    
-    &.vertical {
-      .axis {
-        width: 50vw;
-      }
-    }
-    &.horizontal {
-      .axis {
-        height: 50vh;
-      }
-    }
-  }
-  .center-point {
-    height: 1px;
-    width: 1px;
-    background: #c0392b;
-    position: absolute;
-    top: 50vh;
-    left: 50vw;
-  }
-  
-  .ball {
-    font-size: 2em;
-    
-    transform-style: preserve-3d;
-    
-    height: 1em;
-    width: 1em;
-    background: #2980b9;
-    border-radius: 50%;
-    position: absolute;
-    margin-top: -0.5em;
-    margin-left: -0.5em;
-    display: block;
-    border: 0;
-    
-    &::after {
-      content: '';
-      display: block;
-      background: transparent;
-      height: 0;
-      width: 0;
-      position: absolute;
-      left: 0.25em;
-      top: -0.75em;
-      border-top: 0;
-      border-bottom: 0.5em solid #2980b9;
-      border-right: 0.25em solid transparent;
-      border-left: 0.25em solid transparent;
-    }
-  }
-}
-
-
-
-
 
 
 /* Responsive: Portrait tablets and up */

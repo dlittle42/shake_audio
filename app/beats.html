@@ -1,0 +1,139 @@
+<!doctype html>
+<html class="no-js" lang="">
+  <head>
+    <meta charset="utf-8">
+    <title>webtest</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css(.tmp) styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+    <!-- build:js scripts/vendor/modernizr.js -->
+    <script src="/bower_components/modernizr/modernizr.js"></script>
+    <!-- endbuild -->
+    
+  </head>
+  <body>
+    <!--[if lt IE 10]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+     <div id="preloader"></div>
+  <div id="viz"></div>
+  <div id="controls">
+    <div id="debugText">ÜberViz v0.1.0</div>
+    <canvas id="audioDebug" width=250 height=200></canvas>
+    <div id="settings"></div>
+  </div>
+
+
+ 
+  <div class="trigger center">
+          <img id="recordBtn" src="images/record-btn-white.png" width="80"/>
+  </div>
+   <div id="playBtn" class="center">
+          <img  src="images/play.svg" width="80"/>
+  </div>
+
+    <div id="status">Ready...</div>
+    
+    <div class="container">
+        
+
+        
+        <button id="tiltBtn">Tilt</button>
+        <button id="shakeBtn">Shake</button>
+        <div id="debug">
+          <div id="dataContainerOrientation">No device orientation data</div>
+          <div id="dataContainerMotion">No device motion data</div>
+        </div>
+        <div id="display">
+
+          <div class="ball"></div>
+          <div class="center-point"></div>
+          <div class="plane vertical">
+            <div class="axis"></div>
+          </div>
+          <div class="plane horizontal">
+            <div class="axis"></div>
+          </div>
+          
+        </div>
+        <button id="clapBtn">clap</button>
+        <button id="kickBtn">kick</button>
+        <button id="lowBtn">low</button>
+        <button id="snareBtn">snare</button>
+       <!-- <button id="laserBtn">laser</button> -->
+
+    </div>
+    
+
+    <!-- build:js(.) scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="/bower_components/jquery/dist/jquery.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r71/three.min.js"></script>
+    
+    <!-- build:js(.) scripts/plugins.js -->
+    <script src="/bower_components/howler.js/howler.js"></script>
+    <script src="/bower_components/fastclick/lib/fastclick.js"></script>
+    <script src="/bower_components/shake.js/shake.js"></script>
+    <script src="scripts/lib/minivents.min.js"></script>
+    <script src="scripts/lib/Detector.js"></script>
+    <script src='scripts/lib/stats.min.js'></script>
+    <script src='scripts/lib/dat.gui.min.js'></script>
+    <script src="scripts/lib/SimplexNoise.js"></script>
+   <!-- <script src="scripts/lib/atutil.js"></script> -->
+    <script src="scripts/lib/shaders/AdditiveBlendShader.js"></script>
+    <script src="scripts/lib/shaders/BadTVShader.js"></script>
+    <script src="scripts/lib/postprocessing/EffectComposer.js"></script>
+    <script src="scripts/lib/postprocessing/RenderPass.js"></script>
+    <script src="scripts/lib/postprocessing/ShaderPass.js"></script>
+    <script src="scripts/lib/postprocessing/MaskPass.js"></script> 
+    <script src="scripts/lib/postprocessing/BloomPass.js"></script>
+    <script src="scripts/lib/shaders/CopyShader.js"></script>
+    <script src="scripts/lib/shaders/ConvolutionShader.js"></script>
+    <script src="scripts/lib/shaders/HorizontalBlurShader.js"></script>
+    <script src="scripts/lib/shaders/VerticalBlurShader.js"></script>
+    <script src="scripts/lib/shaders/MirrorShader.js"></script>
+    <script src="scripts/lib/shaders/RGBShiftShader.js"></script>
+    <script src="scripts/lib/shaders/FilmShader.js"></script>
+    <!-- endbuild -->
+
+    
+
+    <script src="scripts/AudioHandler.js"></script>
+  <script src="scripts/ControlsHandler.js"></script>
+  <script src="scripts/FXHandler.js"></script>
+  <script src="scripts/VizHandler.js"></script>
+  
+  <script src="scripts/viz/Bars.js"></script>
+  <script src="scripts/viz/WhiteRing.js"></script>
+
+    <!-- build:js scripts/main.js -->
+    <script src="scripts/beats.js"></script>
+    <!-- endbuild -->
+
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID.
+    <script>
+      (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+      function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+      e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+      e.src='https://www.google-analytics.com/analytics.js';
+      r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+      ga('create','UA-XXXXX-X');ga('send','pageview');
+    </script>
+     -->
+  </body>
+</html>

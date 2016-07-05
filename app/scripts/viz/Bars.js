@@ -11,6 +11,8 @@ var Bars = function() {
 	var segments = 10;
 	var colorArr = ['0xcddc39','0xe91e63','0xffc107','0x00bcd4','0xffeb3b','0x009688'];
 	var colorNum = 0;
+	var bartime = 0.1;
+	var floatVal = 0;
 
 	function init(){
 
@@ -34,7 +36,7 @@ console.log(VizHandler.getVizHolder()+" is here");
 		
 			var mesh = new THREE.Mesh( new THREE.PlaneGeometry( planeWidth, vertDistance,segments,segments), planeMat );
 			mesh.position.y = vertDistance*j - (vertDistance*BAR_COUNT)/2;
-		//	mesh.scale.y = (j+1)/BAR_COUNT*fillFactor;
+			mesh.scale.y = (j+1)/BAR_COUNT*fillFactor;
 			groupHolder.add( mesh );
 		}
 	}
@@ -61,6 +63,7 @@ console.log(VizHandler.getVizHolder()+" is here");
 
 		//slowly move up
 		//groupHolder.position.y = AudioHandler.getBPMTime() * vertDistance;
+		groupHolder.position.y += floatVal * vertDistance/3;// * bartime;
 
 		//scale bars on levels
 		for ( var j = 0; j < BAR_COUNT; j ++ ) {
@@ -73,6 +76,9 @@ console.log(VizHandler.getVizHolder()+" is here");
 		//slowly move up
 		//groupHolder.position.y = AudioHandler.getBPMTime() * vertDistance;
 		console.log('colorNum='+colorArr[colorNum]);
+		floatVal = Math.random() - .5;
+		bartime= Math.floor();
+		groupHolder.position.y = 0;
 		//scale bars on levels
 		for ( var j = 0; j < BAR_COUNT; j ++ ) {
 			groupHolder.children[j].scale.y = num* num + 0.00001;

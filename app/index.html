@@ -27,9 +27,29 @@
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
+     <div id="preloader"></div>
+  <div id="viz"></div>
+  <div id="controls">
+    <div id="debugText">dropbeats</div>
+    <canvas id="audioDebug" width=250 height=200></canvas>
+    <div id="settings"></div>
+  </div>
+
+
+ 
+  <div class="trigger center">
+          <img id="recordBtn" src="images/record-btn-white.png" width="80"/>
+  </div>
+   <div id="playBtn" class="center">
+          <img  src="images/play.svg" width="80"/>
+  </div>
+
+    <div id="status">Ready...</div>
     
     <div class="container">
-        <div id="status">Ready...</div>
+        
+
+        
         <button id="tiltBtn">Tilt</button>
         <button id="shakeBtn">Shake</button>
         <div id="debug">
@@ -52,8 +72,7 @@
         <button id="kickBtn">kick</button>
         <button id="lowBtn">low</button>
         <button id="snareBtn">snare</button>
-        <button id="laserBtn">laser</button>
-
+       <!-- <button id="laserBtn">laser</button> -->
 
     </div>
     
@@ -64,12 +83,43 @@
     <!-- endbower -->
     <!-- endbuild -->
 
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r71/three.min.js"></script> -->
     
     <!-- build:js(.) scripts/plugins.js -->
     <script src="/bower_components/howler.js/howler.js"></script>
     <script src="/bower_components/fastclick/lib/fastclick.js"></script>
     <script src="/bower_components/shake.js/shake.js"></script>
+    <script src="scripts/lib/minivents.min.js"></script>
+    <script src="scripts/lib/Detector.js"></script>
+    <script src='scripts/lib/stats.min.js'></script>
+    <script src='scripts/lib/dat.gui.min.js'></script>
+    <script src="scripts/lib/SimplexNoise.js"></script>    
+    <script src="scripts/lib/shaders/AdditiveBlendShader.js"></script>
+    <script src="scripts/lib/shaders/BadTVShader.js"></script>
+    <script src="scripts/lib/postprocessing/EffectComposer.js"></script>
+    <script src="scripts/lib/postprocessing/RenderPass.js"></script>
+    <script src="scripts/lib/postprocessing/ShaderPass.js"></script>
+    <script src="scripts/lib/postprocessing/MaskPass.js"></script> 
+    <script src="scripts/lib/postprocessing/BloomPass.js"></script>
+    <script src="scripts/lib/shaders/CopyShader.js"></script>
+    <script src="scripts/lib/shaders/ConvolutionShader.js"></script>
+    <script src="scripts/lib/shaders/HorizontalBlurShader.js"></script>
+    <script src="scripts/lib/shaders/VerticalBlurShader.js"></script>
+    <script src="scripts/lib/shaders/MirrorShader.js"></script>
+    <script src="scripts/lib/shaders/RGBShiftShader.js"></script>
+    <script src="scripts/lib/shaders/FilmShader.js"></script>
+
+    <script src="scripts/AudioHandler.js"></script>
+   <script src="scripts/ControlsHandler.js"></script>
+    <script src="scripts/FXHandler.js"></script>
+    <script src="scripts/VizHandler.js"></script>
+  
+    <script src="scripts/viz/Bars.js"></script>
+   
     <!-- endbuild -->
+
+    
+
     
 
     <!-- build:js scripts/main.js -->

@@ -1,3 +1,12 @@
+//UberViz Main v0.1
+//Handles HTML and wiring data
+//Using Three v60
+
+//GLOBAL
+var events = new Events();
+var simplexNoise = new SimplexNoise();
+
+// add Fastclick
 if ('addEventListener' in document) {
 	    document.addEventListener('DOMContentLoaded', function() {
 	        FastClick.attach(document.body);
@@ -10,46 +19,221 @@ if ('addEventListener' in document) {
 
 
 
-$(document).ready(function(){
+//MAIN RMP
+var UberVizMain = function() {
 
+	//var ATUtil;
+
+	var stats;
+	var windowHalfX;
+	var windowHalfY;
+
+	function init() {
+
+
+		if(!Detector.webgl){
+			Detector.addGetWebGLMessage();
+		}
+
+		//INIT DOCUMENT
+		document.onselectstart = function() {
+			return false;
+		};
+
+		document.addEventListener('mousemove', onDocumentMouseMove, false);
+		document.addEventListener('mousedown', onDocumentMouseDown, false);
+		document.addEventListener('mouseup', onDocumentMouseUp, false);
+	//	document.addEventListener('drop', onDocumentDrop, false);
+		document.addEventListener('dragover', onDocumentDragOver, false);
+		window.addEventListener('resize', onResize, false);
+		window.addEventListener('keydown', onKeyDown, false);
+		window.addEventListener('keyup', onKeyUp, false);
+
+		//STATS
+		stats = new Stats();
+		$('#controls').append(stats.domElement);
+		stats.domElement.id = "stats";
+
+		//INIT HANDLERS
+		AudioHandler.init();
+		//ControlsHandler.init();
+		VizHandler.init();
+		FXHandler.init();
+
+		onResize();
+
+/*
+		if (ControlsHandler.vizParams.showControls){
+			$('#controls').show();
+		}
+*/
+		update();
+
+		//on android setup first touch to request fullscreen
+		// var isMobile = !!('ontouchstart' in window);
+		// if (isMobile){
+		// 	$('body').click(function(){
+		// 		$('body')[0].webkitRequestFullscreen();
+		// 	});
+		// }
+
+	}
+
+	function update() {
+		requestAnimationFrame(update);
+		stats.update();
+		events.emit("update");
+	}
+
+
+	function onDocumentDragOver(evt) {
+		evt.stopPropagation();
+		evt.preventDefault();
+		return false;
+	}
+
+	//load dropped MP3
+	function onDocumentDrop(evt) {
+		evt.stopPropagation();
+		evt.preventDefault();
+		//AudioHandler.onMP3Drop(evt);
+	}
+
+	function onKeyDown(event) {
+		switch ( event.keyCode ) {
+			case 32: /* space */
+				//AudioHandler.onTap();
+				VizHandler.setBeat(Math.random()+.1);
+				break;
+			case 81: /* q */
+				//toggleControls();
+				break;
+		}
+	}
+
+	function onKeyUp(event) {
+	}
+
+	function onDocumentMouseDown(event) {
+	}
+
+	function onDocumentMouseUp(event) {
+	}
+
+	function onDocumentMouseMove(event) {
+		// mouseX = (event.clientX - windowHalfX) / (windowHalfX);
+		// mouseY = (event.clientY - windowHalfY) / (windowHalfY);
+	}
+
+	function onResize() {
+		//windowHalfX = window.innerWidth / 2;
+		//windowHalfY = window.innerHeight / 2;
+		VizHandler.onResize();
+	}
+
+	function trace(text){
+		$("#debugText").text(text);
+	}
+
+	function setBeat(num){
+		VizHandler.setBeat(Math.random()+.1);
+	}
+
+/*
+	function toggleControls(){
+		ControlsHandler.vizParams.showControls = !ControlsHandler.vizParams.showControls;
+		$('#controls').toggle();
+		VizHandler.onResize();
+	}
+*/
 
 	function reorient(e) {
 	    var portrait = (window.orientation % 180 == 0);
 	   // $("body > div").css("-webkit-transform", !portrait ? "rotate(0deg)" : "");
-	  }
-	  window.onorientationchange = reorient;
-	  window.setTimeout(reorient, 0);
+	}
+	window.onorientationchange = reorient;
+	window.setTimeout(reorient, 0);
+
+
+	return {
+		init:init,
+		setBeat: setBeat,
+		trace: trace
+	};
+
+}();
+
+$(document).ready(function() {
+	UberVizMain.init();
+
+	// create our AudioContext and osc Nodes
+	var audioContext, osc, gain, x, y;
+	var ready=null;
+	var myShakeEvent;
+	var clap, kick, low, snare;
+
+	console.log("loaded");
+	$('#status').text('loaded');
+
+//	$('.trigger').bind('touchstart', function(){
+
+	$('.trigger').hide();
+
+	$('#playBtn').on('click', function(){
+		$('#playBtn').remove();
+		activateTrigger();
+
+	});
+
+	function activateTrigger(){
+
+		$('.trigger').show();
+		$('body').bind('touchstart', function(){
+		   // $(this).addClass('recording');
+		     $('.trigger').addClass('recording');
+
+		    if (ready != "shake" ){
+		  		activateShakeSound();
+			}else{
+				 myShakeEvent.start();
+			}
+			$('#status').text('Touch Shake');
+		
+
+
+		}).bind('touchend', function(){
+		    //$(this).removeClass('recording');
+		    $('.trigger').removeClass('recording');
+		  //  stopShakeSound();
+		    myShakeEvent.stop();
+		    $('#status').text('Touch Shake Stop');
+		});
+	}
+
 /*
-	var s = document.body || document.documentElement, s = s.style, prefixAnimation = '', prefixTransition = '';
-	if( s.WebkitAnimation == '' )	prefixAnimation	 = '-webkit-';
-	if( s.MozAnimation == '' )		prefixAnimation	 = '-moz-';
-	if( s.OAnimation == '' )		prefixAnimation	 = '-o-';
-	if( s.WebkitTransition == '' )	prefixTransition = '-webkit-';
-	if( s.MozTransition == '' )		prefixTransition = '-moz-';
-	if( s.OTransition == '' )		prefixTransition = '-o-';
-	Object.prototype.onCSSAnimationEnd = function( callback )
-	{
-		var runOnce = function( e ){ callback(); e.target.removeEventListener( e.type, runOnce ); };
-		this.addEventListener( 'webkitAnimationEnd', runOnce );
-		this.addEventListener( 'mozAnimationEnd', runOnce );
-		this.addEventListener( 'oAnimationEnd', runOnce );
-		this.addEventListener( 'oanimationend', runOnce );
-		this.addEventListener( 'animationend', runOnce );
-		if( ( prefixAnimation == '' && !( 'animation' in s ) ) || getComputedStyle( this )[ prefixAnimation + 'animation-duration' ] == '0s' ) callback();
-		return this;
-	};
-	Object.prototype.onCSSTransitionEnd = function( callback )
-	{
-		var runOnce = function( e ){ callback(); e.target.removeEventListener( e.type, runOnce ); };
-		this.addEventListener( 'webkitTransitionEnd', runOnce );
-		this.addEventListener( 'mozTransitionEnd', runOnce );
-		this.addEventListener( 'oTransitionEnd', runOnce );
-		this.addEventListener( 'transitionend', runOnce );
-		this.addEventListener( 'transitionend', runOnce );
-		if( ( prefixTransition == '' && !( 'transition' in s ) ) || getComputedStyle( this )[ prefixAnimation + 'transition-duration' ] == '0s' ) callback();
-		return this;
-	};
-*/
+
+	$('body').bind('touchstart', function(){
+	   // $(this).addClass('recording');
+	     $('.trigger').addClass('recording');
+
+	    if (ready != "shake" ){
+	  		activateShakeSound();
+		}else{
+			 myShakeEvent.start();
+		}
+		$('#status').text('Touch Shake');
+	
+
+
+	}).bind('touchend', function(){
+	    //$(this).removeClass('recording');
+	    $('.trigger').removeClass('recording');
+	  //  stopShakeSound();
+	    myShakeEvent.stop();
+	    $('#status').text('Touch Shake Stop');
+	});
+	*/
+/*
 	var drumMaster = new Howl({
 	  urls: ['audio/drums01.mp3'],
 	  sprite: {
@@ -59,12 +243,36 @@ $(document).ready(function(){
 	    snare: [170, 190]
 	  }
 	});
+*/
+
+	var drumMaster = new Howl({
+	  urls: ['audio/soundmix01.mp3'],
+	  sprite: {
+	    clap: [0, 300],
+	    kick: [400, 300],
+	    low: [1000, 300],
+	    snare: [2600, 300]
+	  }
+	});
+
+
+/*
+	var drumMaster = new Howl({
+	  urls: ['audio/tones-long.mp3'],
+	  sprite: {
+	    clap: [0, 300],
+	    kick: [1000, 300],
+	    low: [2000, 300],
+	    snare: [3000, 300]
+	  }
+	});
+	*/
 
 	// shoot the laser!
-	drumMaster.play('laser');
+	drumMaster.play('kick');
 
-	$('#lowBtn').on('click', function(){
-		$("body").addClass('active');
+	$('#clapBtn').on('click', function(){
+		//$("body").addClass('active');
 		playClap();
 	});
 	$('#kickBtn').on('click', function(){
@@ -77,75 +285,6 @@ $(document).ready(function(){
 	$('#snareBtn').on('click', function(){
 		playSnare();
 	});
-	/*
-	$('#laserBtn').on('click', function(){
-		playLaser();
-	});
-	*/
-
-	$("body").on(
-	    "animationend MSAnimationEnd webkitAnimationEnd oAnimationEnd",
-	    function() {
-	        $(this).removeClass("active");
-	    }
-	);
-
-	function playClap(){
-		drumMaster.play('clap');
-
-	}
-	function playKick(){
-		drumMaster.play('kick');
-
-	}
-	function playLow(){
-		drumMaster.play('low');
-
-	}
-	function playSnare(){
-		drumMaster.play('snare');
-
-	}
-	function playLaser(){
-		drumMaster.play('laser');
-
-	}
-
-	
-
-	// create our AudioContext and osc Nodes
-	var audioContext, osc, gain, x, y;
-	var ready=null;
-	var myShakeEvent;
-	var clap, kick, low, snare;
-
-	console.log("loaded");
-
-	initSound();
-/*
-	if('webkitAudioContext' in window) {
-	    var context = new webkitAudioContext();
-	}else{
-		var context = new AudioContext();
-	}
-
-	
-	var osc = context.createosc();
-
-	osc.connect(context.destination);
-	osc.start(context.currentTime);
-	osc.stop(context.currentTime + 1);
-*/
-
-	$( "#tiltBtn" ).click(function() {
-
-		
-		if (ready == "tilt" ){
-	  		stopTiltSound();
-		}else{
-			activateTiltSound();
-		}
-	});
 
 	$( "#shakeBtn" ).click(function() {
 		if (ready == "shake" ){
@@ -154,43 +293,35 @@ $(document).ready(function(){
 			activateShakeSound();
 		}
 	});
-/*
-	$( "#clapBtn" ).click(function() {
-		clap.currentTime = 0;
-		clap.play();
-	});
-	$( "#kickBtn" ).click(function() {
-		kick.currentTime = 0;
-		kick.play();
-	});
-	$( "#lowBtn" ).click(function() {
-		low.currentTime = 0;
-		low.play();
-	});
-	$( "#snareBtn" ).click(function() {
-		snare.currentTime = 0;
-		snare.play();
-	});
-*/
 
-	function activateTiltSound(){
+	function playClap(){
+		drumMaster.play('clap');
+		vizEffect();
 
-		ready = 'tilt';
-		console.log('tilt sound')
-		$('#tiltBtn').text('stop');
-		window.addEventListener('mousedown', startSound);
-		window.addEventListener('mouseup', stopSound);
-		startSound();
+	}
+	function playKick(){
+		drumMaster.play('kick');
+		vizEffect();
+
+	}
+	function playLow(){
+		drumMaster.play('low');
+		vizEffect();
+
+	}
+	function playSnare(){
+		drumMaster.play('snare');
+		vizEffect();
+
+	}
+	function playLaser(){
+		drumMaster.play('laser');
+		vizEffect();
 
 	}
 
-	function stopTiltSound(){
-		ready = null;
-		$('#tiltBtn').text('tilt');
-		stopSound();
-		window.removeEventListener('mousedown', startSound);
-		window.removeEventListener('mouseup', stopSound);
-
+	function vizEffect(){
+		UberVizMain.setBeat(Math.random()+.1);
 	}
 
 	function activateShakeSound(){
@@ -207,6 +338,14 @@ $(document).ready(function(){
 
 	}
 
+
+	if (window.matchMedia("(min-width: 500px)").matches) {
+	/* the view port is at least 900 pixels wide */
+	} else {
+		//hide controls
+		$('.container').hide();
+	}
+
 	function initShakeSound(){
 		//create a new instance of shake.js.
 	    myShakeEvent = new Shake({
@@ -216,6 +355,7 @@ $(document).ready(function(){
 
 	    // start listening to device motion
 	    myShakeEvent.start();
+	    
 	    
 
 	    // register a shake event
@@ -233,81 +373,17 @@ $(document).ready(function(){
 	    }
 	}
 
-/////
-
-
-	function initSound() {
-	    audioContext = new(window.AudioContext || window.webkitAudioContext)();
-	    gain = audioContext.createGain();
-	    gain.gain.value = 1;
-	    osc = audioContext.createOscillator();
-	    osc.type = 'sine';
-	    osc.frequency.value = 440;
-	    osc.detune.value = 0;
-	    osc.connect(gain);
-	    
-	    $('#status').html('init');
-/*
-
-	   clap = new Audio('audio/clap.wav');
-	   kick = new Audio('audio/kick.wav');
-	   low = new Audio('audio/low.wav');
-	   snare = new Audio('audio/snare.wav');
-	   */
-	
-	}
-
-	//initSound();
-
-
-//////
-
-
-/*
-
-    //create a new instance of shake.js.
-    myShakeEvent = new Shake({
-        threshold: 15
-    });
-
-    // start listening to device motion
-    myShakeEvent.start();
-
-    // register a shake event
-    window.addEventListener('shake', shakeEventDidOccur, false);
-
-    //shake event callback
-    function shakeEventDidOccur () {
-
-        //put your own code here etc.
-        startSound();
-        setTimeout(stopSound, 100);
-        
-    }
-*/
-
-    function startSound(){
-    	console.log('test');
-    	//osc.start(0);
-	   // gain.connect(audioContext.destination);
-    
-    	osc = context.createOscillator();
-		osc.connect(context.destination);
-		osc.start(context.currentTime);
-		
-		$('#status').html('start');
-		
-    }
-
-    function shakeSound(){
+	 function shakeSound(){
     	console.log('shaking');
+    //	$('#status').text('shaking');
     	if (x>0){
     		playClap();
     	}else {
     		playKick();
 
     	}
-    	/*
+    /*
+    
     	if (x>0 && y>0){
     		playClap();
     	}else if (x>0 && y<0){
@@ -318,50 +394,26 @@ $(document).ready(function(){
     	}else (x<0 && y<0)
     		playSnare();
     	}
-    	*/
+   */
     	/*
     	osc = context.createOscillator();
 		osc.connect(context.destination);
 		osc.start(context.currentTime);
 		*/
-		$('#status').html('start');
+
+		vizEffect();
+	//	$('#status').text('start');
 		
     }
 
     function stopSound(){
     	//osc.stop();
   		//osc.disconnect();
-  		$('#status').html('stop');
+  	//	$('#status').text('stop');
     }
 
 
-   /* window.addEventListener('mousedown', function () {
-	  startSound();
-	});
-	*/
-	/*
-	 window.addEventListener('touchstart', function () {
-	 	initSound();
-	 	ready=true;
-	  startSound();
-	  // start everything by connecting to destination
-
-   
-
-	});
-	*/
-	 /*
-	window.addEventListener('mouseup', function () {
-	  stopSound();
-	});
-	*/
-
-	/*
-	window.addEventListener('touchend', function () {
-	 // stopSound();
-	});
-
-*/
+	///////////////////////////////////////////////
 
 
 
@@ -436,27 +488,11 @@ $(document).ready(function(){
 	            
 	        });
 	    }
-/*
-	    function draw() {
-		    osc.detune.value = x;
-		    $('#status').html(x);
-		     
-		    // call the draw function again!
-		    requestAnimationFrame(draw);
-		}
 
-	draw();
-	*/
 	}
 
 	initOrientation();
 
 
 
-
-
 });
-
-
-
-

@@ -2,11 +2,10 @@
 //Handles HTML and wiring data
 //Using Three v60
 
-//GLOBAL
 'use strict';
 
-var events = new Events();
-var simplexNoise = new SimplexNoise();
+var events; // = new Events();
+var simplexNoise; // = new SimplexNoise();
 
 // add Fastclick
 if ('addEventListener' in document) {
@@ -154,6 +153,11 @@ var UberVizMain = (function () {
 })();
 
 $(document).ready(function () {
+
+	//GLOBAL
+	events = new Events();
+	simplexNoise = new SimplexNoise();
+
 	UberVizMain.init();
 
 	// create our AudioContext and osc Nodes
